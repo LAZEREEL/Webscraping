@@ -39,15 +39,21 @@ public class WebCrawler {
 
                 Document doc = Jsoup.connect(URL).ignoreContentType(true).get();
                 Elements availableImgsOnPage = doc.select("img[src]");
-                System.out.println(availableImgsOnPage);
+                Elements availableCssOnPage = doc.select("link[href]");
+                Elements availableScriptOnPage = doc.select("script[src]");
                 Elements availableLinksOnPage = doc.select("a[href]");
                 for (Element ele1 : availableImgsOnPage) {
                     getPageLinks(ele1.attr("abs:src"));
-                    for (Element ele2 : availableLinksOnPage) {
+                    for (Element ele2 : availableCssOnPage) {
                         getPageLinks(ele2.attr("abs:href"));
+                        for (Element ele3 : availableScriptOnPage) {
+                            getPageLinks(ele3.attr("abs:src"));
+                            for (Element ele4 : availableLinksOnPage) {
+                                getPageLinks(ele4.attr("abs:href"));
+                            }
+                        }
                     }
                 }
-
 
             } catch (IOException e) {
                 System.err.println("For '" + URL + "': " + e.getMessage());

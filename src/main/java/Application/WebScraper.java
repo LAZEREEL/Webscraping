@@ -55,8 +55,6 @@ public class WebScraper {
 
                 ImageIO.write(image, "jpg",new File(String.valueOf(imgToBeWritten)));
 
-
-
             } else {
                 if (filteredDirectory.equals("")) {
                     fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
@@ -67,7 +65,7 @@ public class WebScraper {
                 }
                 BufferedWriter writer =
                         new BufferedWriter(new FileWriter(fileToBeWritten));
-
+                System.out.println(fileToBeWritten);
                 // read each line from stream till end
                 String line;
                 while ((line = readr.readLine()) != null) {
