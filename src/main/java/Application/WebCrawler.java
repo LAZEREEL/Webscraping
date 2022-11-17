@@ -23,19 +23,18 @@ public class WebCrawler {
 
     public void getPageLinks(String URL) {
 
-
-
         String substringLink = URL.substring(26);
 
         System.out.println("-");
         System.out.println("-Crawler crawling for new href-");
-        System.out.println("Crawler found: " + substringLink);
+
 
         if (!urlLinks.contains(substringLink)) {
+            System.out.println("Crawler found: " + substringLink);
             try {
                 if (urlLinks.add(substringLink)) {
                     System.out.println(substringLink);
-//                    WebScraper.DownloadWebPage(URL);
+                    WebScraper.DownloadWebPage(substringLink);
                 }
                 Document doc = Jsoup.connect(URL).get();
                 Elements availableLinksOnPage = doc.select("a[href]");
@@ -45,6 +44,9 @@ public class WebCrawler {
             } catch (IOException e) {
                 System.err.println("For '" + URL + "': " + e.getMessage());
             }
+        } else {
+            System.out.println("Crawler ignored duplicate.");
+
         }
     }
 }
