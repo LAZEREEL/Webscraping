@@ -17,10 +17,12 @@ public class WebCrawler {
 
     public void getPageLinks(String URL) {
 
-        if (!urlLinks.contains(URL)) {
+        String substringLink = URL.substring(26);
+
+        if (!urlLinks.contains(substringLink)) {
             try {
-                if (urlLinks.add(URL)) {
-                    System.out.println(URL.substring(26));
+                if (urlLinks.add(substringLink)) {
+                    System.out.println(substringLink);
 //                    Application.DownloadWebPage(URL);
                 }
                 Document doc = Jsoup.connect(URL).get();
