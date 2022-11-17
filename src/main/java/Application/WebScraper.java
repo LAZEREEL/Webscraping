@@ -13,8 +13,6 @@ public class WebScraper {
     public static void DownloadWebPage(String webpage) {
         try {
 
-
-
             // Create URL object
             URL url = new URL("http://books.toscrape.com/" + webpage);
             System.out.println("http://books.toscrape.com/" + webpage);

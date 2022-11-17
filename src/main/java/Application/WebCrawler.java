@@ -5,6 +5,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 
@@ -13,17 +14,28 @@ public class WebCrawler {
 
     public WebCrawler() {
         urlLinks = new HashSet<String>();
+
+        File file = new File("ScrapedWebsite");
+        file.mkdirs();
+        System.out.println("Created ScrapedWebsite folder, will now commence scraping!");
+        System.out.println("-");
     }
 
     public void getPageLinks(String URL) {
 
+
+
         String substringLink = URL.substring(26);
+
+        System.out.println("-");
+        System.out.println("-Crawler crawling for new href-");
+        System.out.println("Crawler found: " + substringLink);
 
         if (!urlLinks.contains(substringLink)) {
             try {
                 if (urlLinks.add(substringLink)) {
                     System.out.println(substringLink);
-//                    Application.DownloadWebPage(URL);
+//                    WebScraper.DownloadWebPage(URL);
                 }
                 Document doc = Jsoup.connect(URL).get();
                 Elements availableLinksOnPage = doc.select("a[href]");
