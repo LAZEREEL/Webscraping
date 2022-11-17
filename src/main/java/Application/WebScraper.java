@@ -1,11 +1,12 @@
 package Application;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.io.IOException;
-
 
 
 public class WebScraper {
@@ -19,6 +20,7 @@ public class WebScraper {
 
             int indexToFilterDirectory = webpage.lastIndexOf('/');
             int indexToFilterFileName = webpage.length();
+
 
             String filteredFileName = webpage.substring(indexToFilterDirectory + 1, indexToFilterFileName);
             String filteredDirectory = "";
@@ -38,24 +40,45 @@ public class WebScraper {
                     new BufferedReader(new InputStreamReader(url.openStream()));
 
             File fileToBeWritten;
-            if (filteredDirectory.equals("")) {
-                fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
+            File imgToBeWritten;
+            if (filteredFileName.endsWith(".jpg")) {
+                if (filteredDirectory.equals("")) {
+                    imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
+                    System.out.println("ENDS WITH JPG, DIRECTORY NOT NEEDED ");
+                } else {
+                    imgToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
+                    System.out.println("ENDS WITH JPG, DIRECTORY NEEDED ");
+                }
+                BufferedImage image =null;
+
+                image = ImageIO.read(url);
+
+                ImageIO.write(image, "jpg",new File(String.valueOf(imgToBeWritten)));
+
+
+
             } else {
-                fileToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
+                if (filteredDirectory.equals("")) {
+                    fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
+                    System.out.println("DOES NOT END WITH JPG, DIRECTORY NOT NEEDED ");
+                } else {
+                    fileToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
+                    System.out.println("DOES NOT END WITH JPG, DIRECTORY NEEDED ");
+                }
+                BufferedWriter writer =
+                        new BufferedWriter(new FileWriter(fileToBeWritten));
+
+                // read each line from stream till end
+                String line;
+                while ((line = readr.readLine()) != null) {
+                    writer.write(line);
+                }
+
+                readr.close();
+                writer.close();
+                System.out.println("Successfully Downloaded: " + filteredFileName);
             }
 
-            BufferedWriter writer =
-                    new BufferedWriter(new FileWriter(fileToBeWritten));
-
-            // read each line from stream till end
-            String line;
-            while ((line = readr.readLine()) != null) {
-                writer.write(line);
-            }
-
-            readr.close();
-            writer.close();
-            System.out.println("Successfully Downloaded: " + filteredFileName);
         }
 
         // Exceptions
