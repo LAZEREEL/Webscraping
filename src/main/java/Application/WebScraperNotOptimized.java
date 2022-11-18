@@ -8,19 +8,18 @@ import java.net.URL;
 
 import java.io.IOException;
 
-
 public class WebScraperNotOptimized {
-    private static String filteredDirectory = "";
+
     private static File fileToBeWritten;
     private static File imgToBeWritten;
+    private static String filteredDirectory;
 
-    public static void successMessage(String created){
+    public static void successMessage(String created) {
         String message = String.format("Created: '%s'", created);
         System.out.println(message);
     }
 
     public static void scrape(String pathFromCrawler) {
-
 
         try {
             // Create URL object
@@ -34,15 +33,17 @@ public class WebScraperNotOptimized {
                 saveFile(url, filteredFileName);
             }
         }
+
         // Exceptions
         catch (MalformedURLException mue) {
             System.out.println("Malformed URL Exception raised");
         } catch (IOException ie) {
-            System.out.println("External library, skipping.");
+            System.out.println("IOException, empty path");
         }
     }
 
     private static String saveDirectory(String pathFromCrawler) {
+
         int indexToFilterDirectory = pathFromCrawler.lastIndexOf('/');
         int indexToFilterFileName = pathFromCrawler.length();
 
@@ -55,24 +56,27 @@ public class WebScraperNotOptimized {
             successMessage(filteredDirectory);
         } catch (StringIndexOutOfBoundsException sioobe) {
             //If there's no directory
-            System.out.println("No directory needed.");
+            System.out.println("StringIndexOutOfBoundsException = No directory needed.");
+            filteredDirectory = "";
         }
         return filteredFileName;
     }
 
     private static void saveJpg(URL url, String filteredFileName) throws IOException {
+
         if (filteredDirectory.equals("")) {
             imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
         } else {
             imgToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
         }
-        BufferedImage image =null;
+        BufferedImage image = null;
         image = ImageIO.read(url);
-        ImageIO.write(image, "jpg",new File(String.valueOf(imgToBeWritten)));
+        ImageIO.write(image, "jpg", new File(String.valueOf(imgToBeWritten)));
         successMessage(filteredFileName);
     }
 
     private static void saveFile(URL url, String filteredFileName) throws IOException {
+
         if (filteredDirectory.equals("")) {
             fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
         } else {

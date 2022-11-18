@@ -16,6 +16,7 @@ public class WebCrawlerNotOptimized {
 
     public WebCrawlerNotOptimized() {
         paths = new HashSet<String>();
+        //Ignore external library
         paths.add("/ajax/libs/jquery/1.9.1/jquery.min.js");
 
         baseFolder = new File("ScrapedWebsite");
@@ -31,14 +32,12 @@ public class WebCrawlerNotOptimized {
 
         if (!paths.contains(path)) {
             System.out.println("Crawler found: " + path);
-
             if (paths.add(path)) {
-                WebScraperNotOptimized.scrape(path);
+                    WebScraperNotOptimized.scrape(path);
             }
             findAllImagesLinksCssAndScriptsRecursively(URL);
-
         } else {
-            System.out.println("Crawler ignored duplicate.");
+            System.out.println("Crawler ignored duplicate");
         }
     }
 

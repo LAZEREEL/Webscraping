@@ -10,9 +10,8 @@ public class MainApplication {
         WebCrawlerNotOptimized crawler = new WebCrawlerNotOptimized();
         
         LocalTime startTime = LocalTime.now();
-        System.out.println("Started scraping");
-        
-        crawler.getPageLinks("http://books.toscrape.com/");
+
+        crawler.findAndScrapePaths("http://books.toscrape.com/");
         
         LocalTime endTime = LocalTime.now();
         System.out.println("Finished scraping after " + getDurationAsString(startTime, endTime));
@@ -28,5 +27,4 @@ public class MainApplication {
         
         return String.format("%02d h %02d min %02d sec", h, min, sec);
     }
-    
 }
