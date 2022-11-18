@@ -10,57 +10,59 @@ import java.io.IOException;
 import java.util.HashSet;
 
 public class WebCrawlerNotOptimized {
-    private HashSet<String> urlLinks;
+    private HashSet<String> paths;
+    private int pathStartIndex = 26;
+    File baseFolder;
 
     public WebCrawlerNotOptimized() {
-        urlLinks = new HashSet<String>();
+        paths = new HashSet<String>();
+        paths.add("/ajax/libs/jquery/1.9.1/jquery.min.js");
 
-        File file = new File("ScrapedWebsite");
-        file.mkdirs();
+        baseFolder = new File("ScrapedWebsite");
+        baseFolder.mkdirs();
+
         System.out.println("Created ScrapedWebsite folder, will now commence scraping!");
-        System.out.println("-");
     }
 
-    public void getPageLinks(String URL) {
+    public void findAndScrapePaths(String URL) {
+        System.out.println("-Crawler crawling-");
 
-        String substringLink = URL.substring(26);
+        String path = URL.substring(pathStartIndex);
 
-        System.out.println("-");
-        System.out.println("-Crawler crawling for new href-");
+        if (!paths.contains(path)) {
+            System.out.println("Crawler found: " + path);
 
+            if (paths.add(path)) {
+                WebScraperNotOptimized.scrape(path);
+            }
+            findAllImagesLinksCssAndScriptsRecursively(URL);
 
-        if (!urlLinks.contains(substringLink)) {
-            System.out.println("Crawler found: " + substringLink);
-            try {
-                if (urlLinks.add(substringLink)) {
-                    System.out.println(substringLink);
-                    WebScraperNotOptimized.scrape(substringLink);
-                }
+        } else {
+            System.out.println("Crawler ignored duplicate.");
+        }
+    }
 
-                Document doc = Jsoup.connect(URL).ignoreContentType(true).get();
-                Elements availableImgsOnPage = doc.select("img[src]");
-                Elements availableCssOnPage = doc.select("link[href]");
-                Elements availableScriptOnPage = doc.select("script[src]");
-                Elements availableLinksOnPage = doc.select("a[href]");
-                for (Element ele1 : availableImgsOnPage) {
-                    getPageLinks(ele1.attr("abs:src"));
-                    for (Element ele2 : availableCssOnPage) {
-                        getPageLinks(ele2.attr("abs:href"));
-                        for (Element ele3 : availableScriptOnPage) {
-                            getPageLinks(ele3.attr("abs:src"));
-                            for (Element ele4 : availableLinksOnPage) {
-                                getPageLinks(ele4.attr("abs:href"));
-                            }
+    private void findAllImagesLinksCssAndScriptsRecursively(String URL) {
+        try {
+            Document doc = Jsoup.connect(URL).ignoreContentType(true).get();
+            Elements availableImgsOnPage = doc.select("img[src]");
+            Elements availableCssOnPage = doc.select("link[href]");
+            Elements availableScriptOnPage = doc.select("script[src]");
+            Elements availableLinksOnPage = doc.select("a[href]");
+            for (Element ele1 : availableImgsOnPage) {
+                findAndScrapePaths(ele1.attr("abs:src"));
+                for (Element ele2 : availableCssOnPage) {
+                    findAndScrapePaths(ele2.attr("abs:href"));
+                    for (Element ele3 : availableScriptOnPage) {
+                        findAndScrapePaths(ele3.attr("abs:src"));
+                        for (Element ele4 : availableLinksOnPage) {
+                            findAndScrapePaths(ele4.attr("abs:href"));
                         }
                     }
                 }
-
-            } catch (IOException e) {
-                System.err.println("For '" + URL + "': " + e.getMessage());
             }
-        } else {
-            System.out.println("Crawler ignored duplicate.");
-
+        } catch (IOException e) {
+            System.err.println("For '" + URL + "': " + e.getMessage());
         }
     }
 }
