@@ -10,80 +10,87 @@ import java.io.IOException;
 
 
 public class WebScraper {
+    private static String filteredDirectory = "";
+    private static File fileToBeWritten;
+    private static File imgToBeWritten;
 
-    public static void DownloadWebPage(String webpage) {
+    public static void successMessage(String created){
+        String message = String.format("Created: '%s'", created);
+        System.out.println(message);
+    }
+
+    public static void scrape(String pathFromCrawler) {
+
+
         try {
-
             // Create URL object
-            URL url = new URL("http://books.toscrape.com/" + webpage);
-            System.out.println("http://books.toscrape.com/" + webpage);
+            URL url = new URL("http://books.toscrape.com/" + pathFromCrawler);
 
-            int indexToFilterDirectory = webpage.lastIndexOf('/');
-            int indexToFilterFileName = webpage.length();
+            String filteredFileName = saveDirectory(pathFromCrawler);
 
-
-            String filteredFileName = webpage.substring(indexToFilterDirectory + 1, indexToFilterFileName);
-            String filteredDirectory = "";
-
-            try {
-                filteredDirectory = webpage.substring(0, indexToFilterDirectory);
-                String directories = filteredDirectory;
-                File file = new File("ScrapedWebsite", directories);
-                file.mkdirs();
-                System.out.println("Directory Created: " + filteredDirectory);
-            } catch (StringIndexOutOfBoundsException sioobe) {
-                //If there's no directory
-                System.out.println("StringIndexOutOfBoundsException = No directory needed!");
-            }
-
-            BufferedReader readr =
-                    new BufferedReader(new InputStreamReader(url.openStream()));
-
-            File fileToBeWritten;
-            File imgToBeWritten;
             if (filteredFileName.endsWith(".jpg")) {
-                if (filteredDirectory.equals("")) {
-                    imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
-                    System.out.println("ENDS WITH JPG, DIRECTORY NOT NEEDED ");
-                } else {
-                    imgToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
-                    System.out.println("ENDS WITH JPG, DIRECTORY NEEDED ");
-                }
-                BufferedImage image =null;
-
-                image = ImageIO.read(url);
-
-                ImageIO.write(image, "jpg",new File(String.valueOf(imgToBeWritten)));
-
+                saveJpg(url, filteredFileName);
             } else {
-                if (filteredDirectory.equals("")) {
-                    fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
-                    System.out.println("DOES NOT END WITH JPG, DIRECTORY NOT NEEDED ");
-                } else {
-                    fileToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
-                    System.out.println("DOES NOT END WITH JPG, DIRECTORY NEEDED ");
-                }
-                BufferedWriter writer =
-                        new BufferedWriter(new FileWriter(fileToBeWritten));
-                System.out.println(fileToBeWritten);
-                // read each line from stream till end
-                String line;
-                while ((line = readr.readLine()) != null) {
-                    writer.write(line);
-                }
-
-                readr.close();
-                writer.close();
-                System.out.println("Successfully Downloaded: " + filteredFileName);
+                saveFile(url, filteredFileName);
             }
-
         }
-
         // Exceptions
         catch (MalformedURLException mue) {
             System.out.println("Malformed URL Exception raised");
         } catch (IOException ie) {
-            System.out.println("IOException raised");
+            System.out.println("External library, skipping.");
         }
+    }
+
+    private static String saveDirectory(String pathFromCrawler) {
+        int indexToFilterDirectory = pathFromCrawler.lastIndexOf('/');
+        int indexToFilterFileName = pathFromCrawler.length();
+
+        String filteredFileName = pathFromCrawler.substring(indexToFilterDirectory + 1, indexToFilterFileName);
+
+        try {
+            filteredDirectory = pathFromCrawler.substring(0, indexToFilterDirectory);
+            File file = new File("ScrapedWebsite", filteredDirectory);
+            file.mkdirs();
+            successMessage(filteredDirectory);
+        } catch (StringIndexOutOfBoundsException sioobe) {
+            //If there's no directory
+            System.out.println("No directory needed.");
+        }
+        return filteredFileName;
+    }
+
+    private static void saveJpg(URL url, String filteredFileName) throws IOException {
+        if (filteredDirectory.equals("")) {
+            imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
+        } else {
+            imgToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
+        }
+        BufferedImage image =null;
+        image = ImageIO.read(url);
+        ImageIO.write(image, "jpg",new File(String.valueOf(imgToBeWritten)));
+        successMessage(filteredFileName);
+    }
+
+    private static void saveFile(URL url, String filteredFileName) throws IOException {
+        if (filteredDirectory.equals("")) {
+            fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
+        } else {
+            fileToBeWritten = new File("ScrapedWebsite/" + filteredDirectory, filteredFileName);
+        }
+        BufferedWriter writer =
+                new BufferedWriter(new FileWriter(fileToBeWritten));
+
+        BufferedReader readr =
+                new BufferedReader(new InputStreamReader(url.openStream()));
+
+        // read each line from stream till end
+        String line;
+        while ((line = readr.readLine()) != null) {
+            writer.write(line);
+        }
+        successMessage(filteredFileName);
+        readr.close();
+        writer.close();
     }
 }

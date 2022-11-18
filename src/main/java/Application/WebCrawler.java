@@ -34,7 +34,7 @@ public class WebCrawler {
             try {
                 if (urlLinks.add(substringLink)) {
                     System.out.println(substringLink);
-                    WebScraper.DownloadWebPage(substringLink);
+                    WebScraper.scrape(substringLink);
                 }
 
                 Document doc = Jsoup.connect(URL).ignoreContentType(true).get();
