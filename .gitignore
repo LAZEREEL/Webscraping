@@ -1,0 +1,15 @@
+# output
+target/
+*.log*
+/ScrapedWebsite
+
+# IntelliJ IDEA
+/.idea
+.idea
+*.iws
+*.iml
+*.ipr
+
+# System Files
+.DS_Store
+Thumbs.db
