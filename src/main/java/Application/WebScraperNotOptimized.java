@@ -10,14 +10,15 @@ import java.io.IOException;
 
 public class WebScraperNotOptimized {
 
-    private static File fileToBeWritten;
-    private static File imgToBeWritten;
-    private static String filteredDirectory;
+    //private static File fileToBeWritten;
+    //private static File imgToBeWritten;
+    static String filteredDirectory;
 
     public static void successMessage(String created) {
         String message = String.format("Created: '%s'", created);
         System.out.println(message);
     }
+
 
     public static void scrape(String pathFromCrawler) {
 
@@ -26,11 +27,14 @@ public class WebScraperNotOptimized {
             URL url = new URL("http://books.toscrape.com/" + pathFromCrawler);
 
             String filteredFileName = saveDirectory(pathFromCrawler);
-
+            String filteredImg;
+            String filteredFile;
             if (filteredFileName.endsWith(".jpg")) {
-                saveJpg(url, filteredFileName);
+                filteredImg = filteredFileName;
+                saveJpg(url, filteredImg);
             } else {
-                saveFile(url, filteredFileName);
+                filteredFile = filteredFileName;
+                saveFile(url, filteredFile);
             }
         }
 
@@ -63,7 +67,7 @@ public class WebScraperNotOptimized {
     }
 
     private static void saveJpg(URL url, String filteredFileName) throws IOException {
-
+        File imgToBeWritten;
         if (filteredDirectory.equals("")) {
             imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
         } else {
@@ -76,7 +80,7 @@ public class WebScraperNotOptimized {
     }
 
     private static void saveFile(URL url, String filteredFileName) throws IOException {
-
+        File fileToBeWritten;
         if (filteredDirectory.equals("")) {
             fileToBeWritten = new File("ScrapedWebsite", filteredFileName);
         } else {
