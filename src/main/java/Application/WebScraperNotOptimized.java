@@ -12,29 +12,35 @@ public class WebScraperNotOptimized {
 
     //private static File fileToBeWritten;
     //private static File imgToBeWritten;
-    static String filteredDirectory;
+    //static String filteredDirectory;
 
     public static void successMessage(String created) {
         String message = String.format("Created: '%s'", created);
         System.out.println(message);
     }
 
-
     public static void scrape(String pathFromCrawler) {
 
         try {
+            int indexToFilterDirectory = pathFromCrawler.lastIndexOf('/');
+            int indexToFilterFileName = pathFromCrawler.length();
+            String filteredFileName = pathFromCrawler.substring(indexToFilterDirectory + 1, indexToFilterFileName);
+            String filteredDirectory ="";
+
+            if(indexToFilterDirectory!=-1) {
+                filteredDirectory = pathFromCrawler.substring(0, indexToFilterDirectory);
+            }
+
             // Create URL object
             URL url = new URL("http://books.toscrape.com/" + pathFromCrawler);
 
-            String filteredFileName = saveDirectory(pathFromCrawler);
-            String filteredImg;
-            String filteredFile;
+
+                saveDirectory(filteredDirectory);
+
             if (filteredFileName.endsWith(".jpg")) {
-                filteredImg = filteredFileName;
-                saveJpg(url, filteredImg);
+                saveJpg(url, filteredFileName, filteredDirectory);
             } else {
-                filteredFile = filteredFileName;
-                saveFile(url, filteredFile);
+                saveFile(url, filteredFileName, filteredDirectory);
             }
         }
 
@@ -46,27 +52,14 @@ public class WebScraperNotOptimized {
         }
     }
 
-    private static String saveDirectory(String pathFromCrawler) {
+    private static void saveDirectory(String filteredDirectory) {
 
-        int indexToFilterDirectory = pathFromCrawler.lastIndexOf('/');
-        int indexToFilterFileName = pathFromCrawler.length();
-
-        String filteredFileName = pathFromCrawler.substring(indexToFilterDirectory + 1, indexToFilterFileName);
-
-        try {
-            filteredDirectory = pathFromCrawler.substring(0, indexToFilterDirectory);
             File file = new File("ScrapedWebsite", filteredDirectory);
             file.mkdirs();
             successMessage(filteredDirectory);
-        } catch (StringIndexOutOfBoundsException sioobe) {
-            //If there's no directory
-            System.out.println("StringIndexOutOfBoundsException = No directory needed.");
-            filteredDirectory = "";
-        }
-        return filteredFileName;
     }
 
-    private static void saveJpg(URL url, String filteredFileName) throws IOException {
+    private static void saveJpg(URL url, String filteredFileName, String filteredDirectory) throws IOException {
         File imgToBeWritten;
         if (filteredDirectory.equals("")) {
             imgToBeWritten = new File("ScrapedWebsite", filteredFileName);
@@ -79,7 +72,7 @@ public class WebScraperNotOptimized {
         successMessage(filteredFileName);
     }
 
-    private static void saveFile(URL url, String filteredFileName) throws IOException {
+    private static void saveFile(URL url, String filteredFileName, String filteredDirectory) throws IOException {
         File fileToBeWritten;
         if (filteredDirectory.equals("")) {
             fileToBeWritten = new File("ScrapedWebsite", filteredFileName);

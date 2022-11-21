@@ -12,15 +12,15 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+
 
 public class WebCrawlerNotOptimized {
     private HashSet<String> paths;
     private int pathStartIndex = 26;
     File baseFolder;
     //Executor pool = Executors.newFixedThreadPool(10);
-    static ExecutorService scraperPool = Executors.newFixedThreadPool(5);
-    static ExecutorService crawlerPool = Executors.newFixedThreadPool(4);
+    ExecutorService scraperPool = Executors.newFixedThreadPool(5);
+    ExecutorService crawlerPool = Executors.newFixedThreadPool(4);
 
 
     public WebCrawlerNotOptimized() {
@@ -53,10 +53,10 @@ public class WebCrawlerNotOptimized {
             System.out.println("Crawler ignored duplicate");
         }
     }
-    static void performTask(String path){
+    void performTask(String path){
         WebScraperNotOptimized.scrape(path);
     }
-    static void taskFinished(){
+    void taskFinished(){
         System.out.println("Waiting for all threads to terminate");
 
             scraperPool.shutdown();while(!scraperPool.isTerminated()) {}
